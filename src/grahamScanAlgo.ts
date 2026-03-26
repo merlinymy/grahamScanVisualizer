@@ -56,8 +56,6 @@ function compareAngle(p: Point, a: Point, b: Point): number {
   // (a.y - p.y) * (b.x - p.x) vs (b.y - p.y) * (a.x - p.x)
   // angle A is bigger if (a.y - p.y) * (b.x - p.x) > (b.y - p.y) * (a.x - p.x)
   // if (a.y - p.y) * (b.x - p.x) - (b.y - p.y) * (a.x - p.x) > 0
-  console.log(`comparing ${a.toString()} and ${b.toString()}`);
-  console.log((a.y - p.y) * (b.x - p.x) - (b.y - p.y) * (a.x - p.x));
   return (a.y - p.y) * (b.x - p.x) - (b.y - p.y) * (a.x - p.x);
 }
 
@@ -91,6 +89,8 @@ export function algo() {
     new Point(4, 1),
     new Point(3, 2),
     new Point(3, 3),
+    new Point(5, 2),
+    new Point(2, 5),
   ];
   const pivot = findPivot(points);
 
@@ -101,21 +101,35 @@ export function algo() {
       return ele !== pivot;
     }),
   );
+  const stack = [];
 
   const sortedAndCleaned = removeCollinear(pivot, filteredAndSorted);
-  // if (filteredPoints.length < 2) {
-  //   console.log("convex hull is empty");
-  // } else {
-  //   const stack = [];
-  //   stack.push(pivot, filteredPoints[0], filteredPoints[1]);
-  //   for (let i = 2; i <= stack.length; i++) {
-  //     while () {
-  //       stack.pop();
-  //     }
-  //     stack.push(filteredPoints[i]);
-  //   }
-  // }
   console.log(sortedAndCleaned);
+  if (sortedAndCleaned.length < 2) {
+    console.log("convex hull is empty");
+  } else {
+    stack.push(pivot, sortedAndCleaned[0], sortedAndCleaned[1]);
+    for (let i = 2; i <= sortedAndCleaned.length - 1; i++) {
+      // if the angle of [stack.length - 1]
+      // is bigger than the angle of sortedAndCleaned[i]
+      // a right turn happened, so we pop [stack.length - 1]
+      console.log(`current stack: ${stack}`);
+      while (
+        compareAngle(
+          stack[stack.length - 2],
+          stack[stack.length - 1],
+          sortedAndCleaned[i],
+        ) > 0
+      ) {
+        console.log(
+          `the polar angle of ${stack[stack.length - 1]} is bigger than ${sortedAndCleaned[i]}, pop out ${stack[stack.length - 1]}`,
+        );
+        stack.pop();
+      }
+      stack.push(sortedAndCleaned[i]);
+    }
+  }
+  console.log(stack);
 }
 
 algo();
