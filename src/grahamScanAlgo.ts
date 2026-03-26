@@ -59,10 +59,8 @@ function compareAngle(p: Point, a: Point, b: Point): number {
   return (a.y - p.y) * (b.x - p.x) - (b.y - p.y) * (a.x - p.x);
 }
 
-// scan the sorted points (sorted ascendingly by angle
-// and then ascendingly by distance if angles are the same )
-//
-//
+// scan the sorted points (sorted ascendingly by angle,
+// and then ascendingly by distance if angles are the same)
 function removeCollinear(pivot: Point, sorted: Point[]): Point[] {
   const res: Point[] = [];
   let i = 0;
@@ -94,7 +92,7 @@ export function algo() {
   ];
   const pivot = findPivot(points);
 
-  // This gives us a point[] sorted by angles, exclude the pivot
+  // This gives us a Point[] sorted by angle, excluding the pivot
   const filteredAndSorted = sortPointsByAngle(
     pivot,
     points.filter((ele) => {
@@ -106,13 +104,13 @@ export function algo() {
   const sortedAndCleaned = removeCollinear(pivot, filteredAndSorted);
   console.log(sortedAndCleaned);
   if (sortedAndCleaned.length < 2) {
-    console.log("convex hull is empty");
+    console.log("convex hull is empty.");
   } else {
     stack.push(pivot, sortedAndCleaned[0], sortedAndCleaned[1]);
     for (let i = 2; i <= sortedAndCleaned.length - 1; i++) {
-      // if the angle of [stack.length - 1]
-      // is bigger than the angle of sortedAndCleaned[i]
-      // a right turn happened, so we pop [stack.length - 1]
+      // if the angle of stack[stack.length - 1]
+      // is bigger than the angle of sortedAndCleaned[i],
+      // a right turn happened, so we pop stack[stack.length - 1]
       console.log(`current stack: ${stack}`);
       while (
         compareAngle(
@@ -122,7 +120,7 @@ export function algo() {
         ) > 0
       ) {
         console.log(
-          `the polar angle of ${stack[stack.length - 1]} is bigger than ${sortedAndCleaned[i]}, pop out ${stack[stack.length - 1]}`,
+          `the polar angle of ${stack[stack.length - 1]} is bigger than ${sortedAndCleaned[i]}, popping ${stack[stack.length - 1]}`,
         );
         stack.pop();
       }
