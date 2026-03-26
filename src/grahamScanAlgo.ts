@@ -61,26 +61,61 @@ function compareAngle(p: Point, a: Point, b: Point): number {
   return (a.y - p.y) * (b.x - p.x) - (b.y - p.y) * (a.x - p.x);
 }
 
+// scan the sorted points (sorted ascendingly by angle
+// and then ascendingly by distance if angles are the same )
+//
+//
+function removeCollinear(pivot: Point, sorted: Point[]): Point[] {
+  const res: Point[] = [];
+  let i = 0;
+  while (i <= sorted.length - 1) {
+    let j = i;
+    while (
+      j <= sorted.length - 2 &&
+      compareAngle(pivot, sorted[j], sorted[j + 1]) === 0
+    ) {
+      j++;
+    }
+    res.push(sorted[j]);
+    i = j + 1;
+  }
+  return res;
+}
+
 export function algo() {
   //   const points = generateRandomPoints(3);
   const points = [
-    new Point(1, 3),
-    new Point(5, 0),
-
-    new Point(4, 0),
-    new Point(3, 1),
-    new Point(2, 2),
+    new Point(1, 2),
+    new Point(2, 1),
+    new Point(3, 0),
     new Point(4, 1),
+    new Point(3, 2),
+    new Point(3, 3),
   ];
-  console.log(points);
   const pivot = findPivot(points);
-  console.log(pivot);
 
-  const filteredPoints = points.filter((ele: Point) => {
-    return ele !== pivot;
-  });
-  sortPointsByAngle(pivot, filteredPoints);
-  console.log(filteredPoints);
+  // This gives us a point[] sorted by angles, exclude the pivot
+  const filteredAndSorted = sortPointsByAngle(
+    pivot,
+    points.filter((ele) => {
+      return ele !== pivot;
+    }),
+  );
+
+  const sortedAndCleaned = removeCollinear(pivot, filteredAndSorted);
+  // if (filteredPoints.length < 2) {
+  //   console.log("convex hull is empty");
+  // } else {
+  //   const stack = [];
+  //   stack.push(pivot, filteredPoints[0], filteredPoints[1]);
+  //   for (let i = 2; i <= stack.length; i++) {
+  //     while () {
+  //       stack.pop();
+  //     }
+  //     stack.push(filteredPoints[i]);
+  //   }
+  // }
+  console.log(sortedAndCleaned);
 }
 
 algo();
